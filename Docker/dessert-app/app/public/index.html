@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postres</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #4a90e2;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            border-bottom: 2px solid #4a90e2;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background-color: #4a90e2;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        .dessert-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .dessert-card h5 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Lista de Postres</h1>
+        <div class="row" id="desserts">
+            <!-- Los postres se cargarán aquí -->
+        </div>
+        <h2>Agregar nuevo postre</h2>
+        <form id="add-dessert-form">
+            <div class="form-group">
+                <label for="dessert-name">Nombre del postre:</label>
+                <input type="text" class="form-control" id="dessert-name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+        </form>
+        <h2>Buscar postre</h2>
+        <form id="search-dessert-form">
+            <div class="form-group">
+                <label for="search-name">Buscar por nombre:</label>
+                <input type="text" class="form-control" id="search-name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+    <script>
+        // Fetch and display desserts
+        const fetchDesserts = (url = 'http://localhost:3000/api/desserts') => {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const dessertList = document.getElementById('desserts');
+                    dessertList.innerHTML = ''; // Clear previous results
+                    data.forEach(dessert => {
+                        const card = document.createElement('div');
+                        card.classList.add('dessert-card');
+                        card.innerHTML = `
+                            <h5>${dessert.name}</h5>
+                        `;
+                        dessertList.appendChild(card);
+                    });
+                });
+        };
+
+        fetchDesserts();
+
+        // Handle add dessert form
+        document.getElementById('add-dessert-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('dessert-name').value;
+            fetch('http://localhost:3000/api/desserts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    fetchDesserts();
+                    document.getElementById('add-dessert-form').reset();
+                });
+        });
+
+        // Handle search form
+        document.getElementById('search-dessert-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('search-name').value;
+            fetchDesserts(`http://localhost:3000/api/desserts?name=${name}`);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  database:
+    container_name: mongo_test
+    image: mongo:6.0.6
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=Sistemas4
+      - MONGO_INITDB_ROOT_PASSWORD=5729qwerty
+    command: ['--auth']
+    networks:
+      - my_network
+
+  dbmanager:
+    depends_on:
+      - database
+    container_name: mongoExpress
+    image: mongo-express:1.0.0-alpha.4
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=Sistemas4
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=5729qwerty
+      - ME_CONFIG_MONGODB_SERVER=database:27017
+    restart: always
+    networks:
+      - my_network
+
+volumes:
+  mongo_data:
+    external: false
+
+networks:
+  my_network:
+    driver: bridge

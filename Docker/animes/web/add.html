@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir Anime</title>
+    <style>
+       /* General */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #141414 40%, #1e1e1e);
+    color: #ffffff;
+    background-attachment: fixed;
+}
+
+/* Container */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(15px);
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Form Container */
+.form-container {
+    background: rgba(28, 28, 28, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+.form-container h1 {
+    margin-top: 0;
+    font-size: 2.5em;
+    color: #ffb400;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #222;
+    color: #ffffff;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border: 1px solid #ffb400;
+    box-shadow: 0 0 10px rgba(255, 180, 0, 0.5);
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+/* Buttons */
+.btn-submit,
+.btn-back {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-submit {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.btn-submit:hover {
+    background-color: #218838;
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(33, 136, 56, 0.5);
+}
+
+.btn-back {
+    background-color: #007bff;
+    color: #fff;
+    margin-top: 20px;
+}
+
+.btn-back:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(0, 86, 179, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1>Añadir Anime</h1>
+            <form id="add-anime-form">
+                <div class="form-group">
+                    <label for="name">Nombre:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Descripción:</label>
+                    <textarea id="description" name="description" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="episodes">Número de Episodios:</label>
+                    <input type="number" id="episodes" name="episodes">
+                </div>
+                <div class="form-group">
+                    <label for="genre">Género:</label>
+                    <input type="text" id="genre" name="genre">
+                </div>
+                <div class="form-group">
+                    <label for="image">Imagen URL:</label>
+                    <input type="text" id="image" name="image">
+                </div>
+                <button type="submit" class="btn-submit">Añadir Anime</button>
+            </form>
+            <button class="btn-back" onclick="window.history.back()">Volver</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('add-anime-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('http://localhost:8000/animes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                if (response.ok) {
+                    alert('Anime añadido exitosamente');
+                    window.location.href = 'index.html';
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al añadir el anime: ${errorData.detail}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al añadir el anime');
+            }
+        });
+    </script>
+</body>
+</html>

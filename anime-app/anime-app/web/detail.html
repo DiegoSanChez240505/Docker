@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Detail</title>
+    <link rel="stylesheet" href="css/detail.css">
+</head>
+<body>
+    <div class="container">
+        <div class="detail-card">
+            <img id="anime-image"  alt="Anime Image" class="anime-image">
+            <h2 id="anime-name">Anime Name</h2>
+            <p><strong>Year:</strong> <span id="anime-year">2024</span></p>
+            <p><strong>Genre:</strong> <span id="anime-genre">Action</span></p>
+            <p><strong>Studio:</strong> <span id="anime-studio">Studio Name</span></p>
+            <p><strong>Ongoing:</strong> <span id="anime-ongoing">No</span></p>
+            <p><strong>Seasons:</strong> <span id="anime-seasons">1 Season</span></p>
+            <p><strong>autor:</strong> <span  id="anime-autor" ></span></p>
+            <p><strong>sinopsis:</strong> <span  id="anime-sinopsis"></span></p>
+            <div class="actions">
+                <a href="index.html">animes</a>
+                <a id="edit-link" href="edit.html">Edit</a>
+                <a id="delete-link" href="javascript:void(0);" onclick="deleteAnime()">Delete</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Fetch and display the anime details based on ID from URL
+        const params = new URLSearchParams(window.location.search);
+        const animeId = params.get('id');
+
+        fetch(`http://localhost:8000/animes/${animeId}`)
+            .then(response => response.json())
+            .then(data => {
+                const anime = JSON.parse(data);
+                document.getElementById('anime-name').textContent = anime.name;
+                document.getElementById('anime-year').textContent = anime.year;
+                document.getElementById('anime-genre').textContent = anime.genre;
+                document.getElementById('anime-studio').textContent = anime.studio;
+                document.getElementById('anime-autor').textContent = anime.autor;
+                document.getElementById('anime-sinopsis').textContent = anime.sinopsis;
+                document.getElementById('anime-ongoing').textContent = anime.ongoing ? 'Yes' : 'No';
+                document.getElementById('anime-seasons').textContent = anime.seasons.map(s => `Season ${s.season}: ${s.episodes} episodes`).join(', ');
+                document.getElementById('anime-image').src = anime.image;
+                document.getElementById('edit-link').href = `edit.html?id=${anime._id.$oid}`;
+                document.getElementById('delete-link').setAttribute('onclick', `deleteAnime('${anime._id.$oid}')`);
+            });
+
+        function deleteAnime(id) {
+            fetch(`http://localhost:8000/animes/${id}`, {
+                method: 'DELETE'
+            }).then(() => {
+                //window.location.href = 'index.html';
+            });
+        }
+    </script>
+</body>
+</html>

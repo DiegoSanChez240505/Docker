@@ -1,0 +1,149 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    color: #000000;
+}
+
+#search {
+    display: block;
+    margin: 20px auto;
+    padding: 10px;
+    width: 80%;
+    max-width: 600px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+#anime-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.card {
+    background-color: #62bcdf;
+    border: 0px solid #e0e0e0;
+    border-radius: 8px;
+    margin: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: calc(30% - 40px);
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.anime-image {
+    margin-top: 10%;
+    margin-left: 25%;
+    width: 40%;
+    max-height: 250px;
+    border-radius: 8px 8px 0 0;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-content h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    color: #ffffff;
+}
+
+.card-content p {
+    margin: 4px 0;
+    color: #0f0f0f;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.actions a {
+    text-decoration: none;
+    color: #000000;
+    background-color: #2afbff;
+    padding: 8px;
+    width: 50px;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.actions a:hover {
+    background-color: #000000;
+    color: #ddd;
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #000000;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    width: 200px;
+    margin-left: 10%;
+    margin-top: 3%;
+    transition: background-color 0.3s;
+}
+
+.add
+{
+    margin-top: -3%;
+}
+a:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.navegation {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.navegation button {
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    font-size: 20px;
+    width: 50px;
+    margin-top: -3%;
+}
+
+.navegation button:hover {
+    text-decoration: none;
+    color: #2ac3ff;
+    font-weight: bold;
+    border: 1px solid #000000;
+    font-size: 20px;
+    width: 50px;
+    margin-top: -3%;
+}

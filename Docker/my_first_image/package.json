@@ -1,0 +1,14 @@
+{
+  "name": "my_first_image",
+  "version": "1.0.0",
+  "description": "mi imagen",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "diego",
+  "license": "ISC",
+  "dependencies": {
+    "node-cron": "^3.0.3"
+  }
+}

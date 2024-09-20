@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Anime</title>
+    <style>
+/* General */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f3f4f6;
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* Container */
+.container {
+    width: 80%;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Keyframes for animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2em;
+    color: #ff6f61;
+}
+
+/* Back Button */
+.btn-back {
+    background-color: #ff6f61;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #ff3d2e;
+    transform: scale(1.05);
+}
+
+/* Anime Card */
+.anime-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.anime-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.anime-card img {
+    max-width: 150px;
+    border-radius: 10px;
+    margin-right: 20px;
+    transition: transform 0.3s ease;
+}
+
+.anime-card img:hover {
+    transform: scale(1.05);
+}
+
+/* Anime Details */
+.anime-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.anime-details h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #ff6f61;
+}
+
+.anime-details p {
+    margin: 10px 0;
+    color: #555;
+}
+
+.anime-details .tags {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.anime-details .tags span {
+    background-color: #ff6f61;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.anime-details .tags span:hover {
+    background-color: #ff3d2e;
+    transform: scale(1.05);
+}
+
+/* Messages */
+.message {
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+.success-message {
+    color: #66bb6a;
+}
+
+.error-message {
+    color: #e53935;
+}
+
+/* Buttons */
+.btn-delete, .btn-edit {
+    background-color: #ff6f61;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-delete:hover {
+    background-color: #ff3d2e;
+    transform: scale(1.05);
+}
+
+.btn-edit:hover {
+    background-color: #ff3d2e;
+    transform: scale(1.05);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Detalles del Anime</h1>
+            <a href="index.html" class="btn-back">Volver</a>
+        </div>
+        <div id="anime-details" class="anime-card"></div>
+        <div>
+            <button id="edit-button" class="btn-edit">Editar</button>
+            <button id="delete-button" class="btn-delete">Eliminar</button>
+        </div>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        const animeDetails = document.getElementById('anime-details');
+        const deleteButton = document.getElementById('delete-button');
+        const editButton = document.getElementById('edit-button');
+        const message = document.getElementById('message');
+        const urlParams = new URLSearchParams(window.location.search);
+        const animeName = urlParams.get('name');
+
+        const fetchAnimeDetails = async (name) => {
+            try {
+                const response = await fetch(`http://localhost:8000/animes/${name}`);
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const anime = await response.json();
+                animeDetails.innerHTML = `
+                    <img src="${anime.image || 'https://via.placeholder.com/150'}" alt="${anime.name}">
+                    <div class="anime-details">
+                        <h2>${anime.name}</h2>
+                        <p>${anime.description || 'Sin descripción'}</p>
+                        <p><strong>Año:</strong> ${anime.year || 'Desconocido'}</p>
+                        <p><strong>Género:</strong> ${anime.genre || 'Desconocido'}</p>
+                        <p><strong>Estudio:</strong> ${anime.studio || 'Desconocido'}</p>
+                        <p><strong>En emisión:</strong> ${anime.ongoing ? 'Sí' : 'No'}</p>
+                        <div class="tags">
+                            ${anime.genre ? anime.genre.split(',').map(tag => `<span>${tag.trim()}</span>`).join('') : ''}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error al obtener los detalles del anime:', error);
+                animeDetails.innerHTML = `<p class="error-message">Error al obtener los detalles del anime: ${error.message}</p>`;
+            }
+        };
+
+        const deleteAnime = async (name) => {
+            try {
+                const response = await fetch(`http://localhost:8000/animes/${name}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud de eliminación');
+                }
+                message.innerHTML = `<p class="success-message">Anime eliminado correctamente</p>`;
+                setTimeout(() => {
+                    window.location.href = 'index.html'; // Redirecciona a la página principal después de la eliminación
+                }, 2000);
+            } catch (error) {
+                console.error('Error al eliminar el anime:', error);
+                message.innerHTML = `<p class="error-message">Error al eliminar el anime: ${error.message}</p>`;
+            }
+        };
+
+        editButton.addEventListener('click', () => {
+            window.location.href = `update.html?name=${animeName}`;
+        });
+
+        deleteButton.addEventListener('click', () => {
+            if (confirm('¿Estás seguro de que quieres eliminar este anime?')) {
+                deleteAnime(animeName);
+            }
+        });
+
+        fetchAnimeDetails(animeName);
+    </script>
+</body>
+</html>

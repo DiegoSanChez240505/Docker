@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Florería Inventario</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Control de Inventario de la Florería</h1>
+    <div>
+        <h2>Agregar nueva flor</h2>
+        <input type="text" id="flowerName" placeholder="Nombre de la flor">
+        <input type="number" id="flowerCount" placeholder="Cantidad">
+        <button onclick="addFlower()">Agregar Flor</button>
+    </div>
+    <div>
+        <h2>Listado de Flores</h2>
+        <ul id="flowerList"></ul>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>

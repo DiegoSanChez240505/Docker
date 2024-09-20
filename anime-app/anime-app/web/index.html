@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Anime List</title>
+</head>
+<body>
+    <h1>Anime List</h1>
+    <a href="create.html" class="add">Add New Anime</a>
+    <input type="text" id="search" placeholder="Search by name">
+    <div id="anime-list"></div>
+    <div id="pagination" class="navegation"></div>
+
+    <script>
+        document.getElementById('search').addEventListener('input', function() {
+            currentPage = 1; // Reset to first page on search
+            fetchAnimes(this.value);
+        });
+
+        const ITEMS_PER_PAGE = 3;
+        let currentPage = 1;
+        let allAnimes = [];
+
+        function fetchAnimes(query = '') {
+            fetch('http://localhost:8000/animes')
+                .then(response => response.json())
+                .then(data => {
+                    allAnimes = JSON.parse(data);
+                    displayAnimes(query, currentPage);
+                    createPagination(allAnimes.length, ITEMS_PER_PAGE);
+                });
+        }
+
+        function displayAnimes(query, page) {
+            const animeList = document.getElementById('anime-list');
+            animeList.innerHTML = ''; // Clear previous results
+            const filteredAnimes = allAnimes.filter(anime => anime.name.toLowerCase().includes(query.toLowerCase()));
+            const start = (page - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const paginatedAnimes = filteredAnimes.slice(start, end);
+
+            paginatedAnimes.forEach(anime => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${anime.image}" alt="${anime.name}" class="anime-image">
+                    <div class="card-content">
+                        <h2>${anime.name} (${anime.year})</h2>
+                        <p>Genre: ${anime.genre}</p>
+                        <p>Studio: ${anime.studio}</p>
+                        <p>Autor: ${anime.autor}</p>
+                        <p>Sinopsis: ${anime.sinopsis}</p>
+                        <p>Ongoing: ${anime.ongoing ? 'Yes' : 'No'}</p>
+                        <div class="actions">
+                            <a href="detail.html?id=${anime._id.$oid}">View</a>
+                            <a href="edit.html?id=${anime._id.$oid}">Edit</a>
+                            <a href="javascript:deleteAnime('${anime._id.$oid}')">Delete</a>
+                        </div>
+                    </div>
+                `;
+                animeList.appendChild(card);
+            });
+        }
+
+        function createPagination(totalItems, itemsPerPage) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = ''; // Clear previous pagination buttons
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    displayAnimes(document.getElementById('search').value, currentPage);
+                });
+                pagination.appendChild(pageButton);
+            }
+        }
+        
+        function deleteAnime(id) {
+            fetch(`http://localhost:8000/animes/${id}`, {
+                method: 'DELETE'
+            }).then(() => fetchAnimes());
+        }
+
+        fetchAnimes();
+    </script>
+</body>
+</html>

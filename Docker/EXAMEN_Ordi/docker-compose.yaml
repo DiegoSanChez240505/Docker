@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: contraseña_root
+      MYSQL_DATABASE: floreria
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: contraseña
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+
+  api:
+    build:
+      context: ./api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: usuario
+      DB_PASSWORD: contraseña
+      DB_NAME: floreria
+
+  web:
+    build:
+      context: ./web
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+volumes:
+  db_data:

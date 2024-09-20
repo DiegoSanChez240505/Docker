@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/create.css">
+
+    <title>Create Anime</title>
+</head>
+<body>
+    <h1>Create Anime</h1>
+    <form id="anime-form">
+        <label>Name: <input type="text" id="name" required></label><br>
+        <label>Year: <input type="number" id="year" required></label><br>
+        <label>Genre: <input type="text" id="genre" required></label><br>
+        <label>Studio: <input type="text" id="studio" required></label><br>
+        <label>Ongoing: <input type="checkbox" id="ongoing"></label><br>
+        <label>Seasons: <input type="text" id="seasons" placeholder="Season 1: 24, Season 2: 12, ..."></label><br>
+        <label>Autor: <input type="text" id="autor" required></label><br>
+        <label>Sinopsis: <input type="text" id="sinopsis" required></label><br>
+        <label>imagen : <input type="url" id="url"required ></label>
+        <button type="submit">Create</button>
+    </form>
+    <a href="index.html">Back to List</a>
+
+    <script>
+        document.getElementById('anime-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const seasons = document.getElementById('seasons').value.split(',').map(s => {
+                const [season, episodes] = s.split(':').map(part => part.trim());
+                return { season: parseInt(season.split(' ')[1]), episodes: parseInt(episodes) };
+            });
+
+            const anime = {
+                name: document.getElementById('name').value,
+                year: parseInt(document.getElementById('year').value),
+                genre: document.getElementById('genre').value,
+                studio: document.getElementById('studio').value,
+                ongoing: document.getElementById('ongoing').checked,
+                seasons: seasons,
+                image: document.getElementById('url').value,
+                autor: document.getElementById('autor').value,
+                sinopsis: document.getElementById('sinopsis').value,
+                
+            };
+
+            fetch('http://localhost:8000/animes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(anime)
+                
+            }).then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>

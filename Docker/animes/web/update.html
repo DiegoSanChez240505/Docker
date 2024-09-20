@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Anime</title>
+    <style>
+  /* General */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #141414 40%, #1e1e1e);
+    color: #ffffff;
+    background-attachment: fixed;
+    transition: background-color 0.3s ease;
+}
+
+/* Container */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 3px solid #ffb400;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 12px 12px 0 0;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    color: #ffb400;
+    text-shadow: 0 0 10px rgba(255, 180, 0, 0.8);
+    animation: textGlow 1s ease-in-out infinite alternate;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #ffb400;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #555;
+    border-radius: 6px;
+    background-color: #222;
+    color: #ffffff;
+    transition: border 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border: 1px solid #ffb400;
+    background-color: #333;
+    box-shadow: 0 0 12px rgba(255, 180, 0, 0.5);
+    outline: none;
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 24px;
+    font-size: 1em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-submit {
+    background-color: #ffb400;
+    color: #141414;
+}
+
+.btn-submit:hover {
+    background-color: #e0a800;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(224, 168, 0, 0.5);
+}
+
+.btn-back {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.btn-back:hover {
+    background-color: #218838;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(33, 136, 56, 0.5);
+}
+
+/* Messages */
+.message {
+    margin-top: 20px;
+    font-size: 1.2em;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.success-message {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.error-message {
+    color: #ff4c4c;
+    font-weight: bold;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes textGlow {
+    from {
+        text-shadow: 0 0 10px rgba(255, 180, 0, 0.8);
+    }
+    to {
+        text-shadow: 0 0 20px rgba(255, 180, 0, 1);
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Editar Anime</h1>
+            <a href="index.html" class="btn btn-back">Volver</a>
+        </div>
+        <form id="update-form">
+            <div class="form-group">
+                <label for="name">Nombre del Anime</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Descripción</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="year">Año</label>
+                <input type="number" id="year" name="year">
+            </div>
+            <div class="form-group">
+                <label for="genre">Género</label>
+                <input type="text" id="genre" name="genre">
+            </div>
+            <div class="form-group">
+                <label for="studio">Estudio</label>
+                <input type="text" id="studio" name="studio">
+            </div>
+            <div class="form-group">
+                <label for="ongoing">En emisión</label>
+                <input type="checkbox" id="ongoing" name="ongoing">
+            </div>
+            <div class="form-group">
+                <label for="image">URL de la Imagen</label>
+                <input type="url" id="image" name="image">
+            </div>
+            <button type="submit" class="btn btn-submit">Actualizar</button>
+        </form>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('update-form');
+        const message = document.getElementById('message');
+        const urlParams = new URLSearchParams(window.location.search);
+        const animeName = urlParams.get('name');
+
+        const fetchAnimeDetails = async (name) => {
+            try {
+                const response = await fetch(`http://localhost:8000/animes/${name}`);
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const anime = await response.json();
+                document.getElementById('name').value = anime.name;
+                document.getElementById('description').value = anime.description || '';
+                document.getElementById('year').value = anime.year || '';
+                document.getElementById('genre').value = anime.genre || '';
+                document.getElementById('studio').value = anime.studio || '';
+                document.getElementById('ongoing').checked = anime.ongoing || false;
+                document.getElementById('image').value = anime.image || '';
+            } catch (error) {
+                console.error('Error al obtener los detalles del anime:', error);
+                message.textContent = 'Error al obtener los detalles del anime: ' + error.message;
+                message.classList.add('error-message');
+            }
+        };
+
+        const updateAnime = async (anime) => {
+            try {
+                const response = await fetch(`http://localhost:8000/animes/${animeName}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(anime)
+                });
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                message.textContent = 'Anime actualizado correctamente';
+                message.classList.add('success-message');
+            } catch (error) {
+                console.error('Error al actualizar el anime:', error);
+                message.textContent = 'Error al actualizar el anime: ' + error.message;
+                message.classList.add('error-message');
+            }
+        };
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const anime = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                year: document.getElementById('year').value,
+                genre: document.getElementById('genre').value,
+                studio: document.getElementById('studio').value,
+                ongoing: document.getElementById('ongoing').checked,
+                image: document.getElementById('image').value
+            };
+            updateAnime(anime);
+        });
+
+        fetchAnimeDetails(animeName);
+    </script>
+</body>
+</html>

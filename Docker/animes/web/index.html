@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuevatina</title>
+    <style>
+        /* General */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #1b1b1b;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Container */
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #282828;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 2px solid #ff8000;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            color: #ff8000;
+        }
+
+        .header input {
+            padding: 8px;
+            font-size: 1em;
+            border: 1px solid #444;
+            border-radius: 4px;
+            margin-right: 10px;
+            background-color: #333;
+            color: #ffffff;
+        }
+
+        .header input:focus {
+            border: 1px solid #ff8000;
+            outline: none;
+        }
+
+        .header button {
+            padding: 8px 16px;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            background-color: #ff8000;
+            color: #141414;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .header button:hover {
+            background-color: #e67000;
+            transform: scale(1.03);
+        }
+
+        /* Anime List */
+        #anime-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Anime Card */
+        .anime-card {
+            background-color: #1e1e1e;
+            width: 180px;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+        }
+
+        .anime-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .anime-card img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .anime-card img:hover {
+            transform: scale(1.03);
+        }
+
+        .anime-details h2 {
+            margin: 0;
+            font-size: 1em;
+            color: #ff8000;
+        }
+
+        .anime-details p {
+            margin: 5px 0;
+            color: #b0b0b0;
+        }
+
+        .anime-details .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        .anime-details .tags span {
+            background-color: #0055ff;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            transition: background-color 0.2s ease;
+        }
+
+        .anime-details .tags span:hover {
+            background-color: #0044cc;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .pagination button:hover {
+            background-color: #ff8000;
+            transform: scale(1.1);
+        }
+
+        .pagination button.active {
+            background-color: #ff8000;
+        }
+
+        .pagination button.disabled {
+            background-color: #333;
+            cursor: not-allowed;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: #ff4c4c;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+
+        /* Suggestions */
+        #suggestions {
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 4px;
+            margin-top: 5px;
+            position: absolute;
+            width: calc(100% - 40px);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #suggestions div {
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #suggestions div:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cuevatina</h1>
+            <div>
+                <input type="text" id="search-bar" placeholder="Buscar animes por nombre">
+                <button id="search-btn">Buscar</button>
+                <div id="suggestions"></div>
+            </div>
+        </div>
+        <button class="btn-add" onclick="location.href='add.html'">Añadir Anime</button>
+        <div id="anime-list"></div>
+        <div class="pagination" id="pagination"></div>
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <script>
+        const searchBar = document.getElementById('search-bar');
+        const searchButton = document.getElementById('search-btn');
+        const animeList = document.getElementById('anime-list');
+        const errorMessage = document.getElementById('error-message');
+        const suggestions = document.getElementById('suggestions');
+        const pagination = document.getElementById('pagination');
+
+        let currentPage = 1;
+        const animesPerPage = 12;
+
+        const fetchAnimes = async (query = '', page = 1) => {
+            try {
+                const response = await fetch(`http://localhost:8000/animes?search=${query}&page=${page}&limit=${animesPerPage}`);
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const data = await response.json();
+                displayAnimes(data.animes);
+                setupPagination(data.totalPages, page);
+            } catch (error) {
+                console.error('Error al obtener los animes:', error);
+                errorMessage.textContent = 'Error al obtener los animes: ' + error.message;
+            }
+        };
+
+        const fetchAnimeDetails = async (name) => {
+            try {
+                const response = await fetch(`http://localhost:8000/animes/${name}`);
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const anime = await response.json();
+                displayAnimes([anime]);
+            } catch (error) {
+                console.error('Error al obtener los detalles del anime:', error);
+                errorMessage.textContent = 'Error al obtener los detalles del anime: ' + error.message;
+            }
+        };
+
+        const displayAnimes = (animes) => {
+            animeList.innerHTML = '';
+            animes.forEach(anime => {
+                const animeCard = document.createElement('div');
+                animeCard.classList.add('anime-card');
+                animeCard.innerHTML = `
+                    <img src="${anime.image || 'https://via.placeholder.com/150'}" alt="${anime.name}">
+                    <div class="anime-details">
+                        <h2>${anime.name}</h2>
+                        <p>${anime.description || 'Sin descripción'}</p>
+                        <div class="tags">
+                            ${anime.genre ? anime.genre.split(',').map(tag => `<span>${tag.trim()}</span>`).join('') : ''}
+                        </div>
+                        <a href="detail.html?name=${anime.name}" class="btn-details">Detalles</a>
+                    </div>
+                `;
+                animeList.appendChild(animeCard);
+            });
+        };
+
+        const setupPagination = (totalPages, currentPage) => {
+            pagination.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.add('page-btn');
+                if (i === currentPage) {
+                    pageButton.classList.add('active');
+                }
+                pageButton.addEventListener('click', () => {
+                    fetchAnimes(searchBar.value, i);
+                });
+                pagination.appendChild(pageButton);
+            }
+        };
+
+        searchButton.addEventListener('click', () => {
+            fetchAnimes(searchBar.value, currentPage);
+        });
+
+        searchBar.addEventListener('input', async () => {
+            const query = searchBar.value;
+            if (query.length >= 3) {
+                try {
+                    const response = await fetch(`http://localhost:8000/animes?search=${query}&limit=5`);
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud');
+                    }
+                    const data = await response.json();
+                    suggestions.innerHTML = '';
+                    data.animes.forEach(anime => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.textContent = anime.name;
+                        suggestionItem.addEventListener('click', () => {
+                            fetchAnimeDetails(anime.name);
+                            suggestions.innerHTML = '';
+                        });
+                        suggestions.appendChild(suggestionItem);
+                    });
+                } catch (error) {
+                    console.error('Error al obtener sugerencias:', error);
+                    errorMessage.textContent = 'Error al obtener sugerencias: ' + error.message;
+                }
+            } else {
+                suggestions.innerHTML = '';
+            }
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!searchBar.contains(e.target)) {
+                suggestions.innerHTML = '';
+            }
+        });
+
+        // Fetch initial list of animes
+        fetchAnimes();
+    </script>
+</body>
+</html>
