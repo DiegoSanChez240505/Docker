@@ -1,2 +1,2 @@
-# POO
-Tareas de la ING. Marlene Ruiz Barboza
+# Docker
+Tareas del ING. Joel Ivan Chuc
